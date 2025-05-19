@@ -1,0 +1,83 @@
+<!-- أكتب نوع الملف وحدد لغة الصفحة للعربية -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <!-- أضبط الترميز حتى يدعم العربية بدون مشاكل -->
+    <meta charset="UTF-8">
+    <!-- عنوان الصفحة كما يظهر في التبويب -->
+    <title>إحصائيات البحث</title>
+    <!-- أربط ملف CSS العصري الخارجي -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- خط تاچوال لجمالية الكتابة -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <!-- مكتبة FontAwesome للأيقونات (اختياري) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+    <!-- بداية الشريط العلوي (Navbar) -->
+    <nav>
+        <!-- رابط للصفحة الرئيسية -->
+        <a href="{{ url_for('home') }}">الرئيسية</a>
+        <!-- رابط صفحة حول الموقع -->
+        <a href="{{ url_for('about') }}">حول</a>
+        <!-- زر لوحة الأدمن -->
+        <a href="{{ url_for('admin_dashboard') }}" class="admin-link">
+            <i class="fa fa-shield"></i> لوحة الأدمن
+        </a>
+        <!-- إذا المستخدم مسجل دخول يظهر ملفه وخروج -->
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">ملفي</a>
+            <a href="{{ url_for('logout') }}">خروج</a>
+        {% else %}
+            <!-- إذا لم يكن مسجل دخول أظهر روابط التسجيل والدخول -->
+            <a href="{{ url_for('register') }}">تسجيل</a>
+            <a href="{{ url_for('login') }}">دخول</a>
+        {% endif %}
+    </nav>
+    <!-- بداية صندوق المحتوى الرئيسي -->
+    <div class="container main-card">
+        <!-- عنوان الصفحة مع أيقونة إحصائية -->
+        <h2><i class="fa fa-chart-bar"></i> إحصائيات البحث في الموقع</h2>
+        <!-- وصف مختصر عن الصفحة -->
+        <p>
+            هنا يمكنك معرفة عدد عمليات البحث التي تمت في الموقع، وأشهر الكلمات أو العبارات التي تم البحث عنها.
+        </p>
+        <!-- قسم إظهار العدد الإجمالي للعمليات -->
+        <div class="section" style="text-align:center;">
+            <strong>مجموع عمليات البحث:</strong>
+            <span style="font-size:1.28em; color:#1976d2; font-weight:bold;">
+                {{ total }}
+            </span>
+        </div>
+        <!-- جدول أشهر كلمات البحث -->
+        <h3>أكثر الكلمات أو الجمل بحثًا</h3>
+        <table>
+            <tr>
+                <!-- ترتيب الكلمة -->
+                <th>#</th>
+                <!-- نص الكلمة أو العبارة -->
+                <th>الكلمة/العبارة</th>
+                <!-- عدد مرات البحث عنها -->
+                <th>عدد مرات البحث</th>
+            </tr>
+            <!-- حلقة تكرار لعرض كل كلمة مشهورة -->
+            {% for idx, q in enumerate(top_queries, start=1) %}
+            <tr>
+                <!-- الترتيب -->
+                <td>{{ idx }}</td>
+                <!-- نص البحث نفسه -->
+                <td>{{ q.query }}</td>
+                <!-- عدد مرات تكراره -->
+                <td>{{ q.times }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <!-- زر للرجوع إلى لوحة الأدمن -->
+        <div style="text-align:center; margin-top:30px;">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn">
+                <i class="fa fa-arrow-right"></i> عودة إلى لوحة الأدمن
+            </a>
+        </div>
+    </div>
+</body>
+</html>

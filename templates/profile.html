@@ -1,0 +1,81 @@
+<!-- تعريف نوع الصفحة بالعربية -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <!-- الترميز يدعم العربية بشكل صحيح -->
+    <meta charset="UTF-8">
+    <!-- عنوان الصفحة -->
+    <title>الملف الشخصي</title>
+    <!-- ربط ملف CSS العصري -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- استدعاء خط تاچوال من جوجل لجمالية الخط -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <!-- أيقونات FontAwesome لو احتجتها في الزر أو البيانات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+    <!-- شريط علوي (Navbar) يظهر في كل الصفحات -->
+    <nav>
+        <!-- رابط الصفحة الرئيسية -->
+        <a href="{{ url_for('home') }}">الرئيسية</a>
+        <!-- رابط حول الموقع -->
+        <a href="{{ url_for('about') }}">حول</a>
+        <!-- إذا المستخدم مسجل دخول يظهر ملفه وخروج -->
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}" class="active">ملفي</a>
+            <a href="{{ url_for('logout') }}">خروج</a>
+        {% else %}
+            <!-- روابط تسجيل ودخول إن لم يكن مسجل دخول -->
+            <a href="{{ url_for('register') }}">تسجيل</a>
+            <a href="{{ url_for('login') }}">دخول</a>
+        {% endif %}
+        <!-- زر لوحة الأدمن لو المستخدم أدمن -->
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-link">
+                <i class="fa fa-shield"></i> لوحة الأدمن
+            </a>
+        {% endif %}
+    </nav>
+    <!-- صندوق عصري لعرض معلومات المستخدم -->
+    <div class="container main-card">
+        <!-- عنوان كبير للصفحة -->
+        <h2><i class="fa fa-user"></i> الملف الشخصي</h2>
+        <!-- عرض رسالة نجاح أو تحذير لو وجدت -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <!-- جدول منسق يعرض بيانات المستخدم -->
+        <table>
+            <tr>
+                <th>اسم المستخدم</th>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+                <th>البريد الإلكتروني</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>نوع الحساب</th>
+                <!-- يكتب أدمن أو مستخدم عادي -->
+                <td>
+                    {% if user.is_admin %}
+                        <span style="color:#1976d2; font-weight:bold;"><i class="fa fa-shield"></i> أدمن</span>
+                    {% else %}
+                        مستخدم
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        <!-- زر للعودة إلى الصفحة الرئيسية -->
+        <div style="text-align:center; margin-top:30px;">
+            <a href="{{ url_for('home') }}" class="btn">
+                <i class="fa fa-home"></i> الصفحة الرئيسية
+            </a>
+        </div>
+    </div>
+</body>
+</html>

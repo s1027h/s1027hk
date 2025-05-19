@@ -1,0 +1,119 @@
+<!-- تعريف نوع الملف HTML وبداية الصفحة مع تحديد اللغة للعربية -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <!-- أضبط الترميز حتى يدعم اللغة العربية -->
+    <meta charset="UTF-8">
+    <!-- أكتب عنوان الصفحة كما يظهر في التبويب -->
+    <title>لوحة تحكم الأدمن</title>
+    <!-- أربط ملف CSS الخارجي العصري للموقع -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- أضيف خط تاچوال من جوجل حتى يكون الخط أجمل -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <!-- أضيف مكتبة أيقونات FontAwesome لو احتجتها للرموز -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+    <!-- بداية الشريط العلوي (Navbar) -->
+    <nav>
+        <!-- رابط للصفحة الرئيسية -->
+        <a href="{{ url_for('home') }}">الرئيسية</a>
+        <!-- رابط لصفحة حول الموقع -->
+        <a href="{{ url_for('about') }}">حول</a>
+        <!-- أضع زر الأدمن ويظهر كأنه نشط حاليا -->
+        <a href="{{ url_for('admin_dashboard') }}" class="admin-link active">
+            <i class="fa fa-shield"></i> لوحة الأدمن
+        </a>
+        <!-- إذا المستخدم مسجل دخوله أظهر ملفه وخروج -->
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">ملفي</a>
+            <a href="{{ url_for('logout') }}">خروج</a>
+        {% else %}
+            <!-- إذا لم يكن مسجل دخول أظهر روابط التسجيل والدخول -->
+            <a href="{{ url_for('register') }}">تسجيل</a>
+            <a href="{{ url_for('login') }}">دخول</a>
+        {% endif %}
+    </nav>
+    <!-- بداية الصندوق الرئيسي العصري للمحتوى -->
+    <div class="container main-card">
+        <!-- عنوان الصفحة الكبير مع أيقونة درع -->
+        <h2><i class="fa fa-shield"></i> لوحة تحكم الأدمن</h2>
+        <!-- وصف مختصر عن لوحة الأدمن -->
+        <p>
+            يمكنك هنا استعراض بيانات جميع المستخدمين وسجل آخر عمليات البحث في الموقع.
+        </p>
+        <!-- عنوان لجدول المستخدمين -->
+        <h3>جميع المستخدمين</h3>
+        <!-- بداية جدول عرض المستخدمين -->
+        <table>
+            <tr>
+                <!-- رقم المستخدم التسلسلي -->
+                <th>#</th>
+                <!-- اسم المستخدم -->
+                <th>اسم المستخدم</th>
+                <!-- البريد الإلكتروني -->
+                <th>البريد الإلكتروني</th>
+                <!-- نوع الحساب (عادي/أدمن) -->
+                <th>نوع الحساب</th>
+            </tr>
+            <!-- أبدأ حلقة تكرار لعرض كل مستخدم -->
+            {% for user in users %}
+            <tr>
+                <!-- رقم المستخدم -->
+                <td>{{ user.id }}</td>
+                <!-- اسم المستخدم -->
+                <td>{{ user.username }}</td>
+                <!-- البريد الإلكتروني للمستخدم -->
+                <td>{{ user.email }}</td>
+                <!-- تحديد نوع الحساب: أدمن أو عادي -->
+                <td>
+                    {% if user.is_admin %}
+                        <!-- إذا كان أدمن أضع درع ولون أزرق -->
+                        <span style="color:#1976d2; font-weight:bold;"><i class="fa fa-shield"></i> أدمن</span>
+                    {% else %}
+                        <!-- إذا كان مستخدم عادي أكتب فقط مستخدم -->
+                        مستخدم
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <!-- عنوان لجدول سجل البحث -->
+        <h3 style="margin-top:40px;">آخر عمليات البحث</h3>
+        <!-- بداية جدول سجل البحث -->
+        <table>
+            <tr>
+                <!-- رقم السجل -->
+                <th>رقم السجل</th>
+                <!-- رقم المستخدم (لو عندك علاقة يمكن تكتب اسم المستخدم) -->
+                <th>اسم المستخدم</th>
+                <!-- نص البحث الذي أدخله المستخدم -->
+                <th>نص البحث</th>
+                <!-- تاريخ ووقت العملية -->
+                <th>تاريخ البحث</th>
+            </tr>
+            <!-- حلقة تكرار تعرض كل سجل بحث -->
+            {% for log in search_logs %}
+            <tr>
+                <!-- رقم السجل -->
+                <td>{{ log.id }}</td>
+                <!-- معرف المستخدم (أو اسم المستخدم إذا ربطت بقاعدة بيانات JOIN) -->
+                <td>
+                    {{ log.user_id }}
+                </td>
+                <!-- نص البحث نفسه -->
+                <td>{{ log.query }}</td>
+                <!-- تاريخ ووقت البحث -->
+                <td>{{ log.search_time }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <!-- زر للانتقال إلى صفحة الإحصائيات -->
+        <div style="text-align:center; margin-top:30px;">
+            <a href="{{ url_for('admin_stats') }}" class="btn">
+                <i class="fa fa-chart-bar"></i> عرض الإحصائيات
+            </a>
+        </div>
+    </div>
+</body>
+</html>

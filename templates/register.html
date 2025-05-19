@@ -1,0 +1,76 @@
+<!-- أبدأ بتعريف نوع الملف واللغة للعربية -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <!-- الترميز حتى تظهر العربية بشكل صحيح -->
+    <meta charset="UTF-8">
+    <!-- عنوان الصفحة في المتصفح -->
+    <title>تسجيل حساب جديد</title>
+    <!-- ربط ملف CSS الخارجي للعصرية والراحة -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- استدعاء خط تاچوال لجمالية الكتابة -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <!-- مكتبة الأيقونات (اختياري لو تستخدمها) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+    <!-- الشريط العلوي يظهر في كل الصفحات -->
+    <nav>
+        <!-- رابط الصفحة الرئيسية -->
+        <a href="{{ url_for('home') }}">الرئيسية</a>
+        <!-- رابط صفحة حول الموقع -->
+        <a href="{{ url_for('about') }}">حول</a>
+        <!-- إذا المستخدم مسجل دخول يظهر ملفه وخروج -->
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">ملفي</a>
+            <a href="{{ url_for('logout') }}">خروج</a>
+        {% else %}
+            <!-- رابط تسجيل الدخول إذا لم يكن مسجلاً -->
+            <a href="{{ url_for('login') }}">دخول</a>
+            <!-- رابط التسجيل الحالي نشط -->
+            <a href="{{ url_for('register') }}" class="active">تسجيل</a>
+        {% endif %}
+        <!-- زر لوحة الأدمن لو المستخدم أدمن -->
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-link">
+                <i class="fa fa-shield"></i> لوحة الأدمن
+            </a>
+        {% endif %}
+    </nav>
+    <!-- كل شيء في صندوق مركزي عصري -->
+    <div class="container main-card">
+        <!-- عنوان الصفحة -->
+        <h2>تسجيل حساب جديد</h2>
+        <!-- شرح مختصر للمستخدم -->
+        <p>
+            يرجى ملء البيانات لإنشاء حساب جديد واستخدام خدمات الموقع.
+        </p>
+        <!-- هنا تظهر رسائل الفلاش (النجاح أو الخطأ) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <!-- نموذج التسجيل (POST) -->
+        <form method="post" action="{{ url_for('register') }}">
+            <!-- حقل اسم المستخدم -->
+            <input type="text" name="username" placeholder="اسم المستخدم" required autofocus>
+            <!-- حقل البريد الإلكتروني -->
+            <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+            <!-- حقل كلمة المرور -->
+            <input type="password" name="password" placeholder="كلمة المرور" required>
+            <!-- زر تسجيل أنيق -->
+            <button type="submit" class="btn">
+                <i class="fa fa-user-plus"></i> تسجيل حساب
+            </button>
+        </form>
+        <!-- ملاحظة لو عنده حساب قديم -->
+        <p style="font-size:.97em; color:#5c5c5c; margin-top:18px;">
+            لديك حساب بالفعل؟
+            <a href="{{ url_for('login') }}">سجّل الدخول هنا</a>
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!-- أبدأ بتعريف نوع الملف ولغة الصفحة بالعربية -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <!-- الترميز حتى يدعم العربية بدون مشاكل -->
+    <meta charset="UTF-8">
+    <!-- عنوان الصفحة حسب نتيجة البحث -->
+    <title>نتائج البحث عن "{{ query }}"</title>
+    <!-- ربط ملف CSS العصري الخارجي -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- خط تاچوال من جوجل لنعومة الخط -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <!-- أيقونات FontAwesome لو احتجتها -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+    <!-- شريط علوي مثل بقية الصفحات -->
+    <nav>
+        <!-- رابط للصفحة الرئيسية -->
+        <a href="{{ url_for('home') }}">الرئيسية</a>
+        <!-- رابط صفحة حول الموقع -->
+        <a href="{{ url_for('about') }}">حول</a>
+        <!-- إذا المستخدم أدمن يظهر زر لوحة الأدمن -->
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-link">
+                <i class="fa fa-shield"></i> لوحة الأدمن
+            </a>
+        {% endif %}
+        <!-- روابط تسجيل/دخول حسب حالة المستخدم -->
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">ملفي</a>
+            <a href="{{ url_for('logout') }}">خروج</a>
+        {% else %}
+            <a href="{{ url_for('register') }}">تسجيل</a>
+            <a href="{{ url_for('login') }}">دخول</a>
+        {% endif %}
+    </nav>
+    <!-- الصندوق العصري لعرض النتائج -->
+    <div class="container main-card">
+        <!-- عنوان البحث -->
+        <h2>
+            <i class="fa fa-search"></i>
+            نتائج البحث عن:  
+            <span style="color:#1976d2;">"{{ query }}"</span>
+        </h2>
+        <!-- إذا لم توجد نتائج أظهر رسالة ودية -->
+        {% if not results %}
+            <div class="flash warning" style="text-align:center;">
+                <i class="fa fa-info-circle"></i>
+                لم يتم العثور على نتائج تطابق كلمة البحث.
+            </div>
+        {% endif %}
+        <!-- تكرار لعرض كل نتيجة في قائمة -->
+        <ul style="list-style: none; padding: 0;">
+            {% for item in results %}
+                <li style="margin-bottom:27px; padding:16px 9px 10px 9px; border-bottom:1.2px solid #ececec;">
+                    <!-- عنوان النتيجة كرابط للمصدر -->
+                    <a href="{{ item.link }}" target="_blank" style="font-size:1.12em; font-weight:bold; color:#1565c0;">
+                        <i class="fa fa-link"></i>
+                        {{ item.title }}
+                    </a>
+                    <!-- الملخص المختصر تحت العنوان -->
+                    <div style="font-size:1.01em; color:#404b61; margin: 7px 0 5px 0;">
+                        {{ item.snippet }}
+                    </div>
+                    <!-- رابط المصدر بشكل أصغر -->
+                    <div style="font-size: .93em; color: #888;">
+                        <i class="fa fa-external-link-alt"></i>
+                        <a href="{{ item.link }}" target="_blank" style="color:#757575;">{{ item.link }}</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <!-- زر للرجوع للبحث مجددًا -->
+        <div style="text-align:center;">
+            <a href="{{ url_for('home') }}" class="btn" style="margin-top:14px;">
+                <i class="fa fa-arrow-right"></i>
+                بحث جديد
+            </a>
+        </div>
+    </div>
+</body>
+</html>

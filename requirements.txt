@@ -1,0 +1,10 @@
+# Flask لتطوير الموقع
+Flask>=2.3
+# Flask-Login لإدارة جلسات المستخدمين
+Flask-Login>=0.6
+# mysql-connector-python للربط مع MySQL
+mysql-connector-python>=8.0
+# Werkzeug لتشفير كلمات السر
+Werkzeug>=2.3
+# requests لاستدعاء Google API
+requests>=2.31
